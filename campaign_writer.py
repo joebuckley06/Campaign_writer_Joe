@@ -11,6 +11,33 @@ import pygsheets
 from IPython.display import display, clear_output
 from ipywidgets import Layout, Button, Box, VBox, Label, ToggleButtons, HBox
 
+def orders_in_api_range(start_date,end_date):
+    """
+    Only returns list of Advertisers and Orders live during this date range
+    start_date = '2018-01-01'
+    end_date = '2018-01-07'
+    """
+    url_endpoint = 'http://analytics.qz.com/api/ads/csv'
+
+    mydict = {'startDate': start_date, 'endDate': end_date}
+    
+    response = requests.get(url_endpoint, params=mydict, stream=True)
+    data = response.json()
+    
+    dfh = pd.DataFrame(data)
+    dfh.columns = dfh.loc[0]
+    dfh = dfh.loc[1:]
+    dfh = dfh.reset_index(drop=True)
+    
+    clients = sorted(list(set(dfh['advertiser'])))
+    orders = sorted(list(set(dfh['order'])))
+    orders = [s for s in orders if 'TEST' not in s.upper()]
+    print( end_date, str(len(clients)), " clients")
+    return(clients,orders)
+
+
+
+
 
 def get_data(csv_directory, latest_csv):
         """
