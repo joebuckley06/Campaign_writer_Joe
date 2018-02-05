@@ -67,6 +67,7 @@ def all_order_writer(client_dict):
         dft.columns = dft.loc[0]
         dft = dft.loc[1:]
         dft = dft.reset_index(drop=True)
+        dft = dft[dft['order']==order].copy()
 
         dft = dft.rename(columns={'date':'Date',
                            'advertiser':'Advertiser','order':'Order',
