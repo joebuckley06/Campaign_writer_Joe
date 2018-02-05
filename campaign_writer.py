@@ -52,6 +52,9 @@ def all_order_writer(client_dict):
     """
     order_list = sorted(list(client_dict.values()))
     url_endpoint = 'http://analytics.qz.com/api/ads/csv'
+    goog_auth_dir = '/Users/jbuckley/Python Jupyter/Dashboard'
+    os.chdir(goog_auth_dir)
+    gc = pygsheets.authorize() 
     
     for order in order_list:
         client = list(client_dict.keys())[list(client_dict.values()).index(order)]
