@@ -7,6 +7,7 @@ Created on Thu Jan 11 15:25:20 2018
 """
 import os
 import pandas as pd
+import requests
 import pygsheets
 from IPython.display import display, clear_output
 from ipywidgets import Layout, Button, Box, VBox, Label, ToggleButtons, HBox
@@ -35,8 +36,84 @@ def orders_in_api_range(start_date,end_date):
     print( end_date, str(len(clients)), " clients")
     return(clients,orders)
 
+def all_order_writer(order_list):
+    """
+    Takes a list of orders, collects data from Hoon's Analytis API, then writes the data to the corresponding client Google sheet
 
+    + Input  = List of DFP order names
+    + Output = Updated Google Sheet Campaign Docs, printed "Success" or "Failure"
+    
+    """
+    for order in order_list:
+        df_client = dfh[dfh['order']==order]
+        client = list(set(df_client['advertiser']))[0]
+        start_date = '2017-07-01'
+        end_date = datetime.date.today().strftime("%Y-%m-%d")
+        mydict = {'startDate': start_date, 'endDate': end_date, 'advertiser':client}
+        response = requests.get(url_endpoint, params=mydict, stream=True)
+        data = response.json()
+        dft = pd.DataFrame(data)
+        dft.columns = dft.loc[0]
+        dft = dft.loc[1:]
+        dft = dft.reset_index(drop=True)
 
+        dft = dft.rename(columns={'date':'Date',
+                           'advertiser':'Advertiser','order':'Order',
+                           'line_item_id':'Line item ID',
+                           'line_item':'Line item',
+                           'creative_id':'Creative ID',
+                           'dfp_creative_name':'Creative',
+                           'dfp_impressions':'DFP Creative ID Impressions',
+                           'dfp_clicks':'DFP Creative ID Clicks',
+                           'normalized_impressions':'Normalized 3P Impressions',
+                           'normalized_clicks':'Normalized 3P Clicks',
+                           'ad_server_impressions':'Ad server Active View viewable impressions',
+                           'int_sessions':'int sessions',
+                           'impressions':'Keen Impressions',
+                           'creative_type':'creative.type',
+                           'creative_name':'creative.name',
+                           })
+        # create ad unit column
+        dft['adunit'] = dft['placement'].apply(ad_from_placement)
+        # replace Nones/Nans/Nulls
+        dft['creative.type'] = dft['creative.type'].fillna('no match')
+        dft['version'] = dft['version'].replace('null','')
+        # create creative_name_version
+        dft['creative.name.version'] = dft['creative.name'] + '_' + dft['version']
+        # make date a datetime object
+        #dft['Date'] = pd.to_datetime(dft['Date'])
+        # drop keen impressions column
+        dft['Keen Impressions'] = dft.drop('Keen Impressions',1)
+
+        # fill in blank video data
+        dft[['result_5', 'result_75', 'result_90', 
+            'result_100', 'int sessions',
+            'interactions']] = dft[['result_5', 'result_75', 'result_90', 
+            'result_100', 'int sessions',
+            'interactions']].fillna(0)
+        # fill in blank creative columns
+        dft[['creative.name.version','creative.name', 'creative_value']] = dft[['creative.name.version','creative.name', 'creative_value']].fillna('') 
+
+        # Column Order
+        col_order = ['site', 'Date', 'Advertiser', 'Order', 'Line item ID',
+               'Line item', 'Creative ID', 'Creative', 'placement', 'adunit', 'device',
+               'DFP Creative ID Impressions', 'DFP Creative ID Clicks',
+               'Normalized 3P Impressions', 'Normalized 3P Clicks',
+               'Ad server Active View viewable impressions', 'result_5', 'result_75',
+               'result_90', 'result_100', 'int sessions', 'interactions',
+               'creative.type', 'creative.name', 'version', 'creative.name.version','creative_value']
+
+        dft = dft[col_order]
+
+        try:
+            google_sheet = gc.open(client +' '+ order + '.xlsx')
+            data = google_sheet.worksheet('title','data')
+            data.add_rows(150)
+            data.set_dataframe(dft,'A1',copy_head=True)
+            print("Success: ",client, order,)
+        except:
+            #data.add_rows(150)
+            print("Failure: ",client, order)
 
 
 def get_data(csv_directory, latest_csv):
