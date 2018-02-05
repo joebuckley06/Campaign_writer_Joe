@@ -14,7 +14,7 @@ from ipywidgets import Layout, Button, Box, VBox, Label, ToggleButtons, HBox
 
 def orders_in_api_range(start_date,end_date):
     """
-    Only returns list of Advertisers and Orders live during this date range
+    Returns list of Advertisers and Orders live during this date range
     start_date = '2018-01-01'
     end_date = '2018-01-07'
     """
@@ -30,23 +30,23 @@ def orders_in_api_range(start_date,end_date):
     dfh = dfh.loc[1:]
     dfh = dfh.reset_index(drop=True)
     
-    clients = sorted(list(set(dfh['advertiser'])))
-    orders = sorted(list(set(dfh['order'])))
-    orders = [s for s in orders if 'TEST' not in s.upper()]
-    print( end_date, str(len(clients)), " clients")
-    return(clients,orders)
+    dict_x = pd.Series(dfh.order.values,index=dfh.advertiser).to_dict()
+    clients = sorted(list(dict_x.keys()))
+    #orders = sorted(list(dict_x.values()))
+    print( end_date, str(len(clients)), "clients")
+    return(dict_x)
 
-def all_order_writer(order_list):
+def all_order_writer(client_dict):
     """
-    Takes a list of orders, collects data from Hoon's Analytis API, then writes the data to the corresponding client Google sheet
+    Takes a dictionary of clients & orders, collects data from Hoon's Analytis API, then writes the data to the corresponding client Google sheet
 
-    + Input  = List of DFP order names
+    + Input  = Dictionary of DFP client & order names
     + Output = Updated Google Sheet Campaign Docs, printed "Success" or "Failure"
     
     """
+    order_list = sorted(list(client_dict.values()))
     for order in order_list:
-        df_client = dfh[dfh['order']==order]
-        client = list(set(df_client['advertiser']))[0]
+        client = list(client_dict.keys())[list(client_dict.values()).index(order)]
         start_date = '2017-07-01'
         end_date = datetime.date.today().strftime("%Y-%m-%d")
         mydict = {'startDate': start_date, 'endDate': end_date, 'advertiser':client}
