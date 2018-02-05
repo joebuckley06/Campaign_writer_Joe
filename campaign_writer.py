@@ -46,6 +46,8 @@ def all_order_writer(client_dict):
     
     """
     order_list = sorted(list(client_dict.values()))
+    url_endpoint = 'http://analytics.qz.com/api/ads/csv'
+    
     for order in order_list:
         client = list(client_dict.keys())[list(client_dict.values()).index(order)]
         start_date = '2017-07-01'
