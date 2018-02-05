@@ -36,6 +36,9 @@ def orders_in_api_range(start_date,end_date):
     #orders = sorted(list(dict_x.values()))
     print( end_date, str(len(clients)), "clients")
     return(dict_x)
+    
+def ad_from_placement(x):
+    return(x.split(' ')[0])
 
 def all_order_writer(client_dict):
     """
