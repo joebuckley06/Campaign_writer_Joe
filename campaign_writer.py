@@ -30,6 +30,8 @@ def orders_in_api_range(start_date,end_date):
     dfh.columns = dfh.loc[0]
     dfh = dfh.loc[1:]
     dfh = dfh.reset_index(drop=True)
+    dfh = dfh[dfh.order.str.contains("TEST") == False]
+    dfh = dfh[dfh.order.str.contains("Test") == False]
     
     dict_x = pd.Series(dfh.order.values,index=dfh.advertiser).to_dict()
     clients = sorted(list(dict_x.keys()))
