@@ -126,7 +126,7 @@ def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/D
             #data.add_rows(150)
             print("Failure: ",client, order)
             
-def single_order_writer(client, order, goog_auth_dir='/Users/jbuckley/Python Jupyter/Dashboard'):
+def single_order_writer(client, order, start_date ='2017-07-01', end_date = datetime.date.today().strftime("%Y-%m-%d"), goog_auth_dir='/Users/jbuckley/Python Jupyter/Dashboard'):
     """
     Takes a client and an order, collects data from Hoon's Analytis API, then writes the data to the corresponding client Google sheet
 
@@ -139,8 +139,6 @@ def single_order_writer(client, order, goog_auth_dir='/Users/jbuckley/Python Jup
     os.chdir(goog_auth_dir)
     gc = pygsheets.authorize() 
         
-    start_date = '2017-07-01'
-    end_date = datetime.date.today().strftime("%Y-%m-%d")
     mydict = {'startDate': start_date, 'endDate': end_date, 'type':'display','advertiser':client,}
     response = requests.get(url_endpoint, params=mydict, stream=True)
     data = response.json()
