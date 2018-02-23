@@ -21,7 +21,7 @@ def orders_in_api_range(start_date,end_date):
     """
     url_endpoint = 'http://analytics.qz.com/api/ads/csv'
 
-    mydict = {'startDate': start_date, 'endDate': end_date}
+    mydict = {'startDate': start_date, 'endDate': end_date, 'type':'display'}
     
     response = requests.get(url_endpoint, params=mydict, stream=True)
     data = response.json()
@@ -60,7 +60,7 @@ def all_order_writer(client_dict):
         client = list(client_dict.keys())[list(client_dict.values()).index(order)]
         start_date = '2017-07-01'
         end_date = datetime.date.today().strftime("%Y-%m-%d")
-        mydict = {'startDate': start_date, 'endDate': end_date, 'advertiser':client}
+        mydict = {'startDate': start_date, 'endDate': end_date, 'type':'display','advertiser':client,}
         response = requests.get(url_endpoint, params=mydict, stream=True)
         data = response.json()
         dft = pd.DataFrame(data)
@@ -143,7 +143,7 @@ def single_order_writer(client, order):
         
     start_date = '2017-07-01'
     end_date = datetime.date.today().strftime("%Y-%m-%d")
-    mydict = {'startDate': start_date, 'endDate': end_date, 'advertiser':client}
+    mydict = {'startDate': start_date, 'endDate': end_date, 'type':'display','advertiser':client}
     response = requests.get(url_endpoint, params=mydict, stream=True)
     data = response.json()
     dft = pd.DataFrame(data)
