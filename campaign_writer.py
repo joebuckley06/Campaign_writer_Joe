@@ -42,7 +42,7 @@ def orders_in_api_range(start_date,end_date):
 def ad_from_placement(x):
     return(x.split(' ')[0])
 
-def all_order_writer(client_dict):
+def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/Dashboard'):
     """
     Takes a dictionary of clients & orders, collects data from Hoon's Analytis API, then writes the data to the corresponding client Google sheet
 
@@ -52,7 +52,6 @@ def all_order_writer(client_dict):
     """
     order_list = sorted(list(client_dict.values()))
     url_endpoint = 'http://analytics.qz.com/api/ads/csv'
-    goog_auth_dir = '/Users/jbuckley/Python Jupyter/Dashboard'
     os.chdir(goog_auth_dir)
     gc = pygsheets.authorize() 
     
@@ -127,7 +126,7 @@ def all_order_writer(client_dict):
             #data.add_rows(150)
             print("Failure: ",client, order)
             
-def single_order_writer(client, order):
+def single_order_writer(client, order,goog_auth_dir='/Users/jbuckley/Python Jupyter/Dashboard'):
     """
     Takes a client and an order, collects data from Hoon's Analytis API, then writes the data to the corresponding client Google sheet
 
@@ -137,7 +136,6 @@ def single_order_writer(client, order):
     """
     
     url_endpoint = 'http://analytics.qz.com/api/ads/csv'
-    goog_auth_dir = '/Users/jbuckley/Python Jupyter/Dashboard'
     os.chdir(goog_auth_dir)
     gc = pygsheets.authorize() 
         
