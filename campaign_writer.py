@@ -51,7 +51,7 @@ def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/D
     
     """
     order_list = sorted(list(client_dict.values()))
-    url_endpoint = 'http://analytics.qz.com/api/ads/csv'
+    url_endpoint = 'http://analytics.qz.com/api/ads/csv?'
     os.chdir(goog_auth_dir)
     gc = pygsheets.authorize() 
     
@@ -135,7 +135,7 @@ def single_order_writer(client, order,goog_auth_dir='/Users/jbuckley/Python Jupy
     
     """
     
-    url_endpoint = 'http://analytics.qz.com/api/ads/csv'
+    url_endpoint = 'http://analytics.qz.com/api/ads/csv?'
     os.chdir(goog_auth_dir)
     gc = pygsheets.authorize() 
         
