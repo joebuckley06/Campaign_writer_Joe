@@ -59,7 +59,7 @@ def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/D
         client = list(client_dict.keys())[list(client_dict.values()).index(order)]
         start_date = '2017-07-01'
         end_date = datetime.date.today().strftime("%Y-%m-%d")
-        mydict = {'startDate': start_date, 'endDate': end_date, 'advertiser':client, 'type':'display'}
+        mydict = {'startDate': start_date, 'endDate': end_date, 'type':'display','advertiser':client}
         response = requests.get(url_endpoint, params=mydict, stream=True)
         data = response.json()
         dft = pd.DataFrame(data)
@@ -141,7 +141,7 @@ def single_order_writer(client, order,goog_auth_dir='/Users/jbuckley/Python Jupy
         
     start_date = '2017-07-01'
     end_date = datetime.date.today().strftime("%Y-%m-%d")
-    mydict = {'startDate': start_date, 'endDate': end_date, 'advertiser':client,'type':'display'}
+    mydict = {'startDate': start_date, 'endDate': end_date, 'type':'display','advertiser':client}
     response = requests.get(url_endpoint, params=mydict, stream=True)
     data = response.json()
     dft = pd.DataFrame(data)
