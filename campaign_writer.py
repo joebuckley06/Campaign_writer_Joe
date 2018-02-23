@@ -51,7 +51,7 @@ def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/D
     
     """
     order_list = sorted(list(client_dict.values()))
-    url_endpoint = 'http://analytics.qz.com/api/ads/csv?'
+    url_endpoint = 'http://analytics.qz.com/api/ads/csv'
     os.chdir(goog_auth_dir)
     gc = pygsheets.authorize() 
     
@@ -126,7 +126,7 @@ def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/D
             #data.add_rows(150)
             print("Failure: ",client, order)
             
-def single_order_writer(client, order,goog_auth_dir='/Users/jbuckley/Python Jupyter/Dashboard'):
+def single_order_writer(client, order, goog_auth_dir='/Users/jbuckley/Python Jupyter/Dashboard'):
     """
     Takes a client and an order, collects data from Hoon's Analytis API, then writes the data to the corresponding client Google sheet
 
@@ -135,7 +135,7 @@ def single_order_writer(client, order,goog_auth_dir='/Users/jbuckley/Python Jupy
     
     """
     
-    url_endpoint = 'http://analytics.qz.com/api/ads/csv?'
+    url_endpoint = 'http://analytics.qz.com/api/ads/csv'
     os.chdir(goog_auth_dir)
     gc = pygsheets.authorize() 
         
