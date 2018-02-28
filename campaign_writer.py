@@ -57,7 +57,11 @@ def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/D
     
     for order in order_list:
         client = list(client_dict.keys())[list(client_dict.values()).index(order)]
-        start_date = '2017-07-01'
+        google_sheet = gc.open(client +' '+ order + '.xlsx')
+        data = google_sheet.worksheet('title','data')
+        dates = data.get_col(2)
+        dates.remove('Date')
+        start_date = min(dates)
         end_date = datetime.date.today().strftime("%Y-%m-%d")
         mydict = {'startDate': start_date, 'endDate': end_date, 'type':'display','advertiser':client,}
         response = requests.get(url_endpoint, params=mydict, stream=True)
