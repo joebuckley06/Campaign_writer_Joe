@@ -64,7 +64,7 @@ def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/D
             dates.remove('Date')
             start_date = min(dates)
         except:
-            print(client, order)
+            print("No Sheet for", client, order)
         else:
             try:
                 end_date = datetime.date.today().strftime("%Y-%m-%d")
@@ -131,7 +131,7 @@ def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/D
                 print("Success: ",client, order,)
             except:
                 #data.add_rows(150)
-                print("Failure: ",client, order)
+                print("Sheet writing issue: ",client, order)
             
 def single_order_writer(client, order, start_date ='2017-07-01', end_date = datetime.date.today().strftime("%Y-%m-%d"), goog_auth_dir='/Users/jbuckley/Python Jupyter/Dashboard'):
     """
