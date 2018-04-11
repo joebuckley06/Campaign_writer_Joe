@@ -57,7 +57,7 @@ def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/D
     gc = pygsheets.authorize() 
     
     for order in order_list:
-        client = list(client_dict.keys())[list(client_dict.values()).index(order)]
+        client = list(client_dict.values())[list(client_dict.keys()).index(order)]
         try:
             google_sheet = gc.open(client +' '+ order + '.xlsx')
             data = google_sheet.worksheet('title','data')
