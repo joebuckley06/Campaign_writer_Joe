@@ -33,11 +33,12 @@ def orders_in_api_range(start_date,end_date):
     dfh = dfh[dfh.order.str.contains("TEST") == False]
     dfh = dfh[dfh.order.str.contains("Test") == False]
     
-    dict_x = pd.Series(dfh.order.values,index=dfh.advertiser).to_dict()
-    clients = sorted(list(dict_x.keys()))
-    #orders = sorted(list(dict_x.values()))
-    print( end_date, str(len(clients)), "clients")
-    return(dict_x)
+    new_dict = {}
+    for order in set(dfh['order']):
+        dft = dfh[dfh['order']==order]
+        new_dict[order] = dft['advertiser'].iloc[0]
+    print( end_date, str(len(list(set(dfh['order'])))), "orders")
+    return(new_dict)
     
 def ad_from_placement(x):
     return(x.split(' ')[0])
@@ -50,7 +51,7 @@ def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/D
     + Output = Updated Google Sheet Campaign Docs, printed "Success" or "Failure"
     
     """
-    order_list = sorted(list(client_dict.values()))
+    order_list = sorted(list(client_dict.keys()))
     url_endpoint = 'http://analytics.qz.com/api/ads/csv'
     os.chdir(goog_auth_dir)
     gc = pygsheets.authorize() 
@@ -122,6 +123,12 @@ def all_order_writer(client_dict,goog_auth_dir='/Users/jbuckley/Python Jupyter/D
                        'Ad server Active View viewable impressions', 'result_5', 'result_75',
                        'result_90', 'result_100', 'int sessions', 'interactions',
                        'creative.type', 'creative.name', 'version', 'creative.name.version','creative_value']
+                
+                dates = list(pd.to_datetime(dft['Date']))
+                dates = sorted(dates)
+                date_set = set(dates[0] + datetime.timedelta(x) for x in range((dates[-1] - dates[0]).days))
+                missing = sorted(date_set - set(dates))
+                print(client + ' missing dates over range:', missing)
         
                 dft = dft[col_order]
                 google_sheet = gc.open(client +' '+ order + '.xlsx')
@@ -181,7 +188,7 @@ def single_order_writer(client, order, start_date ='2017-07-01', end_date = date
     # make date a datetime object
     #dft['Date'] = pd.to_datetime(dft['Date'])
     # drop keen impressions column
-    dft['Keen Impressions'] = dft.drop('Keen Impressions',1)
+    #dft['Keen Impressions'] = dft.drop('Keen Impressions',1)
 
     # fill in blank video data
     dft[['result_5', 'result_75', 'result_90', 
@@ -202,6 +209,14 @@ def single_order_writer(client, order, start_date ='2017-07-01', end_date = date
            'creative.type', 'creative.name', 'version', 'creative.name.version','creative_value']
 
     dft = dft[col_order]
+    try: 
+        dates = list(pd.to_datetime(dft['Date']))
+        dates = sorted(dates)
+        date_set = set(dates[0] + datetime.timedelta(x) for x in range((dates[-1] - dates[0]).days))
+        missing = sorted(date_set - set(dates))
+        print(client + ' missing dates over range:', missing)
+    except:
+        print("all dates are here")
 
     try:
         google_sheet = gc.open(client +' '+ order + '.xlsx')
